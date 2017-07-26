@@ -86,7 +86,7 @@
         </div>
     </body>
     <script>
-      var conn = new WebSocket('ws://localhost:8080');
+      var conn = new WebSocket('wss://webrtc.local:443/wss2/');
       conn.open = function(e){
         console.log("Connection established!");;
       }
