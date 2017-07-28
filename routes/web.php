@@ -20,3 +20,8 @@ Route::get('/', 'ChatController@login')->name('home');
 Route::get('/login', 'ChatController@login')->name('login');
 
 Route::post('/chat', 'ChatController@chat')->name('chat');
+
+Route::resource('/rooms', 'RoomController');
+
+Route::get('/setting_room/{id}', 'RoomController@setting_room')->name('setting_room');
+Route::post('/setting_generate', 'RoomController@setting_generate')->name('setting_generate');

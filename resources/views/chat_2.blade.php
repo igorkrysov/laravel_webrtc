@@ -29,12 +29,8 @@
               <video id="localVideo-{{$nick}}"  class="localVideo" autoplay muted></video>
 
               <button id="callButton" onclick="createOffer()">✆</button>
-              @foreach($users as $user)
-                @if($user == $nick)
-                  @continue;
-                @endif
-                <video id="remoteVideo-{{$user}}" class='video' autoplay></video>
-              @endforeach
+              <video id="remoteVideo-user1" class='video' autoplay></video>
+              <video id="remoteVideo-user2" class='video' autoplay></video>
 
             </div>
         </div>
@@ -46,19 +42,15 @@
       var SessionDescription = window.mozRTCSessionDescription || window.RTCSessionDescription;
       navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
 
-      @foreach($users as $user)
-        @if($user == $nick)
-          @continue;
-        @endif
-        var pc_{{$user}};
-      @endforeach
+      var pc_user1;
+      var pc_user2;
+      var pc_user3;
 
 
       // Step 1. getUserMedia
       navigator.getUserMedia(
-          //{ audio: true, video: true },
-          { audio: true },
-        //{ video: true },
+        //  { audio: true, video: true },
+        { video: true },
         gotStream,
         function(error) { console.log(error) }
       );
@@ -69,77 +61,86 @@
         console.log(URL.createObjectURL(stream));
 
           //eval('pc_' + getUser()) = new PeerConnection(null);
+          pc_user1 = new PeerConnection(null);
+          pc_user2 = new PeerConnection(null);
 
-          @foreach($users as $user)
-            @if($user == $nick)
-              @continue;
-            @endif
-            pc_{{$user}} = new PeerConnection(null);
-            pc_{{$user}}.addStream(stream);
-            pc_{{$user}}.onicecandidate = gotIceCandidate_{{$user}};
-            pc_{{$user}}.onaddstream = gotRemoteStream_{{$user}};
-          @endforeach
+          eval('pc_' + getUser()).addStream(stream);
+          eval('pc_' + getUser()).onicecandidate = eval('gotIceCandidate_' + getUser());
+          eval('pc_' + getUser()).onaddstream = eval('gotRemoteStream_' + getUser());
+
+          // pc_user1 = new PeerConnection(null);
+          // pc_user1.addStream(stream);
+          // pc_user1.onicecandidate = gotIceCandidate_user1;
+          // pc_user1.onaddstream = gotRemoteStream_user1;
+          //
+          // pc_user2 = new PeerConnection(null);
+          // pc_user2.addStream(stream);
+          // pc_user2.onicecandidate = gotIceCandidate_user2;
+          // pc_user2.onaddstream = gotRemoteStream_user2;
+          //
+          // pc_user3 = new PeerConnection(null);
+          // pc_user3.addStream(stream);
+          // pc_user3.onicecandidate = gotIceCandidate_user3;
+          // pc_user3.onaddstream = gotRemoteStream_user3;
+
 
       }
 
       function createOffer() {
 
-          //console.log(getUser());
+          console.log(getUser());
 
-          @foreach($users as $user)
-            @if($user == $nick)
-              @continue;
-            @endif
-            pc_{{$user}}.createOffer(
-              gotLocalDescription_{{$user}},
-              function(error) { console.log(error) },
-              { 'mandatory': { 'OfferToReceiveAudio': true, 'OfferToReceiveVideo': true } }
-            );
-          @endforeach
 
+          eval('pc_' + getUser()).createOffer(
+            eval('gotLocalDescription_' + getUser()),
+            function(error) { console.log(error) },
+            { 'mandatory': { 'OfferToReceiveAudio': true, 'OfferToReceiveVideo': true } }
+          );
+          // pc_user1.createOffer(
+          //   gotLocalDescription_user1,
+          //   function(error) { console.log(error) },
+          //   { 'mandatory': { 'OfferToReceiveAudio': true, 'OfferToReceiveVideo': true } }
+          // );
+          //  pc_user2.createOffer(
+          //    gotLocalDescription_user2,
+          //    function(error) { console.log(error) },
+          //    { 'mandatory': { 'OfferToReceiveAudio': true, 'OfferToReceiveVideo': true } }
           //  );
         console.log("WE CALLED!")
       }
 
-      @foreach($users as $user)
-        @if($user == $nick)
-          @continue;
-        @endif
-        function createAnswer_{{$user}}(message) {
-          console.log("createAnswer_{{$user}}");
-          console.log('message.type', message.type );
-           pc_{{$user}}.setRemoteDescription(new SessionDescription(message));
-           pc_{{$user}}.createAnswer(
-             gotLocalDescription_{{$user}},
+
+        function createAnswer_user1() {
+          console.log("createAnswer_user1");
+           pc_user1.createAnswer(
+             gotLocalDescription_user1,
              function(error) { console.log(error) },
              { 'mandatory': { 'OfferToReceiveAudio': true, 'OfferToReceiveVideo': true } }
            );
            console.log("WE ANSWERED!");
         }
 
-        function gotLocalDescription_{{$user}}(description){
-          pc_{{$user}}.setLocalDescription(description);
-          sendMessage(description, "{{$user}}");
+        function gotLocalDescription_user1(description){
+          pc_user1.setLocalDescription(description);
+          sendMessage(description, getUser());
         }
 
-        function gotIceCandidate_{{$user}}(event){
+        function gotIceCandidate_user1(event){
           if (event.candidate) {
             sendMessage({
               type: 'candidate',
               label: event.candidate.sdpMLineIndex,
               id: event.candidate.sdpMid,
               candidate: event.candidate.candidate
-            }, "{{$user}}");
+            }, getUser());
           }
         }
 
+        function gotRemoteStream_user1(event){
 
+          document.getElementById("remoteVideo-user1").src = URL.createObjectURL(event.stream);
 
-        function gotRemoteStream_{{$user}}(event){
-            document.getElementById("remoteVideo-{{$user}}").src = URL.createObjectURL(event.stream);
         }
-      @endforeach
-
 
 
 
@@ -150,6 +151,41 @@
 
           return "user1";
         }
+///////////////////
+
+function createAnswer_user2() {
+  console.log("createAnswer_user2");
+   pc_user2.createAnswer(
+     gotLocalDescription_user2,
+     function(error) { console.log(error) },
+     { 'mandatory': { 'OfferToReceiveAudio': true, 'OfferToReceiveVideo': true } }
+   );
+   console.log("WE ANSWERED!");
+}
+
+function gotLocalDescription_user2(description){
+  pc_user2.setLocalDescription(description);
+  sendMessage(description, getUser());
+}
+
+function gotIceCandidate_user2(event){
+  if (event.candidate) {
+    sendMessage({
+      type: 'candidate',
+      label: event.candidate.sdpMLineIndex,
+      id: event.candidate.sdpMid,
+      candidate: event.candidate.candidate
+    }, getUser());
+  }
+}
+
+function gotRemoteStream_user2(event){
+
+  document.getElementById("remoteVideo-user2").src = URL.createObjectURL(event.stream);
+
+}
+
+
 
 
 
@@ -172,13 +208,12 @@
             var src = message.src;
             var variable = 'pc_' + src;
 
-            console.log("I: {{$nick}} src: ",message.src, " type: ",message.type);
+            console.log(message);
             if (message.type === 'offer') {
                 console.log('message.type', message.type );
                 eval(variable).setRemoteDescription(new SessionDescription(message));
                 //createAnswer_user1();
-                eval("createAnswer_" + src + '(message)');
-                console.log("createAnswer_" + src + '()' );
+                eval("createAnswer_" + src + '()');
             }
             else if (message.type === 'answer') {
 
@@ -195,7 +230,11 @@
 
       }
       //
-
+      // function send(){
+      //     var data = 'Data for sending: ' + Math.random();
+      //     conn.send(data);
+      //     console.log('Sent: ' + data);
+      // }
 
       function sendMessage(message, dst){
         var str = JSON.stringify(message);
@@ -205,6 +244,12 @@
           conn.send(str);
       }
 
+      // function sendMessage(message){
+      //   var str = JSON.stringify(message);
+      //  console.log("We sending: ", str);
+      //     //console.log("we sending: ", str);
+      //     conn.send(str);
+      // }
 
     </script>
 </html>

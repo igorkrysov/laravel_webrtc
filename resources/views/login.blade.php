@@ -14,11 +14,14 @@
                 <div class="title m-b-md">
                     Laravel
                 </div>
+                @foreach($users as $key => $value)
                 <form method="post" action="{{route('chat')}}">
                   {{ csrf_field() }}
-                  <input type="text" name="nick" value="igor"><br>
+                  <input type="text" name="nick" placeholder="nick" value="{{$value}}"><br>
+                  <input type="text" name="pass" value="{{$key}}"><br>
                   <input type="submit" value="Join">
                 </form>
+                @endforeach
             </div>
         </div>
     </body>
