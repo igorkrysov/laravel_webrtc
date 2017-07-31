@@ -19,6 +19,11 @@
                   {{ csrf_field() }}
                   <input type="text" name="nick" placeholder="nick" value="{{$value}}"><br>
                   <input type="text" name="pass" value="{{$key}}"><br>
+                  <input type="text" name="fio" value=""><br>
+
+                    <label><input type="radio" name="camera" value="1" checked="checked" />camera</label><br>
+                    <label><input type="radio" name="camera" value="2" />microphone</label><br>
+
                   <input type="submit" value="Join">
                 </form>
                 @endforeach

@@ -18,6 +18,7 @@ class ChatController extends Controller
       $this->validate($request, [
         'nick' => 'required',
         'pass' => 'required',
+        'fio' => 'required',
         ]);
 
       if(SettingRoom::where('nick', $request->input('nick'))->where('pass', $request->input('pass'))->where('room_id', 1)->count() != 1)
@@ -28,6 +29,7 @@ class ChatController extends Controller
       // $users = ['igor', 'serzh'];
       $users = SettingRoom::where('room_id', 1)->get()->pluck('nick');
 
-      return view('chat', ['nick' => $request->input('nick'), 'users' => $users]);
+
+      return view('chat', ['nick' => $request->input('nick'), 'users' => $users, 'fio' => $request->input('fio'), 'microphoneonly' => $request->input('camera')]);
     }
 }
