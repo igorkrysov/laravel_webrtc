@@ -29,6 +29,7 @@ SSLCertificateKeyFile /etc/ssl/private/server.key
 </VirtualHost>
 
 
+
 setting turnserver
 tu
 # you can listen ports 3478 and 5349 instead of 80/443
@@ -61,6 +62,3 @@ user=test:test
 
 
 START: turnserver
-
-
-
