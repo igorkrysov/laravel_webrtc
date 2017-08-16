@@ -10,7 +10,7 @@ class ChatController extends Controller
     public function login(){
       $users = SettingRoom::where('room_id', 1)->get()->pluck('nick', 'pass');
 
-      dump($users);
+      //dump($users);
       return view('login',['users' => $users]);
     }
 
@@ -30,6 +30,10 @@ class ChatController extends Controller
       $users = SettingRoom::where('room_id', 1)->get()->pluck('nick');
 
 
-      return view('chat', ['nick' => $request->input('nick'), 'users' => $users, 'fio' => $request->input('fio'), 'microphoneonly' => $request->input('camera')]);
+      return view('chat_recreate', ['nick' => $request->input('nick'), 'users' => $users, 'fio' => $request->input('fio'), 'microphoneonly' => $request->input('camera')]);
+    }
+
+    public function test(){
+      return view('test');
     }
 }

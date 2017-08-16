@@ -21,6 +21,8 @@ Route::get('/login', 'ChatController@login')->name('login');
 
 Route::post('/chat', 'ChatController@chat')->name('chat');
 
+Route::get('/test', 'ChatController@test')->name('test');
+
 Route::resource('/rooms', 'RoomController');
 
 Route::get('/setting_room/{id}', 'RoomController@setting_room')->name('setting_room');

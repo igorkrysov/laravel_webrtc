@@ -233,6 +233,28 @@
       navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
     //  navigator.getUserMedia = navigator.getUserMedia || navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia;
 
+    //var configuration = null;
+     var configuration = {
+       'iceServers': [
+         // {
+         //     url: 'turn:turn.bistri.com:80',
+         //     credential: 'homeo',
+         //     username: 'homeo'
+         //  },
+          {
+              url: 'turn:webrtc-test.ru',
+              credential: 'test',
+              username: 'test'
+          },
+
+       ]
+     };
+    // var configuration = {
+    //   'iceServers': [{
+    //     'urls': 'tun:webrtc-test.ru'
+    //   }]
+    // };
+
       @foreach($users as $user)
         @if($user == $nick)
           @continue;
@@ -240,7 +262,7 @@
         var pc_{{$user}};
       @endforeach
 
-
+      var localStream = null;
       // Step 1. getUserMedia
     navigator.getUserMedia(
     //  navigator.mediaDevices.getUserMedia(
@@ -257,6 +279,7 @@
       );
 
       function gotStream(stream) {
+        localStream = stream;
         document.getElementById("callButton").style.display = 'inline-block';
         document.getElementById("localVideo-{{$nick}}").src = URL.createObjectURL(stream);
         console.log(URL.createObjectURL(stream));
@@ -267,7 +290,7 @@
             @if($user == $nick)
               @continue;
             @endif
-            pc_{{$user}} = new PeerConnection(null);
+            pc_{{$user}} = new PeerConnection(configuration);
             pc_{{$user}}.addStream(stream);
             pc_{{$user}}.onicecandidate = gotIceCandidate_{{$user}};
             pc_{{$user}}.onaddstream = gotRemoteStream_{{$user}};
@@ -276,9 +299,6 @@
       }
 
       function createOffer() {
-
-          //console.log(getUser());
-
           @foreach($users as $user)
             @if($user == $nick)
               @continue;
@@ -352,7 +372,8 @@
 
 
       // WebSocket
-      var conn = new WebSocket("wss://{{ str_replace('https://','',url('/')) }}/wss2/");
+      //var conn = new WebSocket("wss://{{ str_replace('https://','',url('/')) }}/wss2/");
+      var conn = new WebSocket("wss://webrtc-test.ru/wss2/");
       conn.open = function(e){
         console.log("Connection established!");;
 
@@ -384,6 +405,15 @@
               }
 
               if(message.type === 'request'){
+                var src = message.src;
+                var variable = 'pc_' + src;
+                console.log("#######################: ", URL.createObjectURL(localStream));
+                // recreate PC  src
+                  eval(variable + ' = new PeerConnection(configuration)');
+                  eval(variable).addStream(localStream);
+                  eval(variable).onicecandidate = eval('gotIceCandidate_' + src);
+                  eval(variable).onaddstream = eval('gotRemoteStream_' + src);
+                //
                 sendMessage({
                     type: 'answer',
                     online: 'true',
