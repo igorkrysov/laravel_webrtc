@@ -12,7 +12,7 @@
         <div class="flex-center position-ref full-height">
             <div class="content">
                 <div class="title m-b-md">
-                    Laravel
+                    Laravel2
                 </div>
                 @foreach($users as $key => $value)
                 <form method="post" action="{{route('chat')}}">

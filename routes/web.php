@@ -16,6 +16,9 @@
 // });
 
 Route::get('/', 'ChatController@login')->name('home');
+Route::get('/test', function() {
+  dd('sdf');
+});
 
 Route::get('/login', 'ChatController@login')->name('login');
 
