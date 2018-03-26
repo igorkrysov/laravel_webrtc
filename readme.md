@@ -62,3 +62,19 @@ user=test:test
 
 
 START: turnserver
+
+
+579  a2enmod SSLEngine
+580  a2enmod ssl 
+618  a2enmod rewrite 
+626  a2enmod proxy
+634  sudo a2enmod proxy_http
+635  sudo a2enmod proxy
+637  a2enmod proxy proxy_http proxy_ajp 
+638  sudo a2enmod proxy_balancer
+639  sudo a2enmod proxy_wstunnel
+
+
+apt-get install coturn
+
+
